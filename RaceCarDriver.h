@@ -340,11 +340,11 @@ stack<DIRECTION> reconstructPath_Backtrack_TeamOne( pair<int, int>&start,
 
     reverse(pathDown.begin(), pathDown.end()); // Reversing pathDown to get correct order from start to target
 
-    for (int i = pathDown.size()-1; i >= 0; i--) { // Reversed iteration
-        finalPath.push(pathDown[i - 1]);
+    for (int i = (int)pathDown.size()-1; i >= 0; i--) { // Reversed iteration
+        finalPath.push(pathDown[i]);
     }
 
-    for (int i = pathUp.size()-1; i >= 0; i--) { // Reversed iteration
+    for (int i = (int)pathUp.size()-1; i >= 0; i--) { // Reversed iteration
         finalPath.push(pathUp[i]);
     }
 
