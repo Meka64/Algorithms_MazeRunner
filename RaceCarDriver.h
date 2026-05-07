@@ -550,7 +550,7 @@ DIRECTION BFSNextMove_TeamOne(set<pair<int,int>>& walls,
                 //                                                      targetLocation, parentMap);
                 // }
 
-                pathToTarget = reconstructPath_TeamOne(currentLocation,
+                pathToTarget = reconstructPath_Backtrack_TeamOne(currentLocation,
                                                        targetLocation, parentMap);
             }
 
