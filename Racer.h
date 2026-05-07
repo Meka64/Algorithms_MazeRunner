@@ -74,7 +74,7 @@ void Racer::move(int direction){
 		case WEST: location.x--; break;
 		case SOUTH: location.y++; break;
 	}
-	if(location.x == 4 and location.y == 0){ // og: if(location.x == 34 and location.y == 19
+	if(location.x == 12 and location.y == 16){ // og: if(location.x == 34 and location.y == 19
 		finished = true;
 	}
 }

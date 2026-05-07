@@ -95,10 +95,10 @@ int main(int argc, char ** argv)
 	srand(time(0));
 
     // why are these commented out??
-	buildMaze(false, cells, walls, g);
-    saveMaze(walls, "C:/Users/Hannah_Ross1/Algorithms_MazeRunner/testFiles/open_right_5x5");
+	//buildMaze(false, cells, walls, g);
+    //saveMaze(walls, "/Users/Blaze/Documents/Intro_To_Algorithms/Algorithms_MazeRunner/testFiles/rightColGone_5x5");
 
-    readMaze(walls, "C:/Users/Hannah_Ross1/Algorithms_MazeRunner/testFiles/open_right_5x5");
+    readMaze(walls, "/Users/Blaze/Documents/Intro_To_Algorithms/Algorithms_MazeRunner/testFiles/rightColGone_5x5");
     //readMaze(walls, "wallMaze2.txt");
     //readMaze(walls, "wallMaze3.txt");
 
@@ -129,23 +129,23 @@ clock.reset();
 					case DOWN_ARROW:  robot.move(SOUTH); break;
 
 				}
-				robot.move(driver.BFSNextMove());  //FIXME: changed from .next move
+				robot.move(driver.nextMoveTeamOne(runCount));  //FIXME: changed from .next move
 				legalMove(robot, walls);
 				robot.draw(g);
 				g.update();
-				g.Sleep(200); //FIXME: commented
+				//g.Sleep(200); //FIXME: commented
 
 			}
 
 			if(g.mouseClick()){
 			}
 
-			robot.move(driver.BFSNextMove()); //FIXME: changed from .nextMove
-            g.Sleep(200); //FIXME: commented
+			robot.move(driver.nextMoveTeamOne(runCount)); //FIXME: changed from .nextMove
+            //g.Sleep(200); //FIXME: commented
 			legalMove(robot, walls);
 			robot.draw(g);
 			g.update();
-            g.Sleep(200); //FIXME: commented
+            //g.Sleep(50); //FIXME: commented
 		}
 		else{
 			if(robot.Finished()){
@@ -181,7 +181,7 @@ bool legalMove(Racer& r, const set<pair<int,int> >& walls){
 
 	if(cell1 == cell2) return true;
 	if(p1.x < 0 || p1.y < 0 || p2.x < 0 || p2.y < 0) r.die();
-	if(p1.x >= row || p1.y >= col || p2.x >= row || p2.y >= col) r.die();
+	if(p1.x >= col || p1.y >= row || p2.x >= col || p2.y >= row) r.die();
 
 	flag =  (walls.find(make_pair(cell1,cell2)) != walls.end());
 	if(!flag){
