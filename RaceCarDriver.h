@@ -264,96 +264,65 @@ void updateCurrentLocation(pair<int, int>& currentLocation, DIRECTION move) {
 // function for reconstructPath_TeamOne()
 stack<DIRECTION> reconstructPath_TeamOne(pair<int, int> start,
                                          pair<int, int> end,
-<<<<<<< HEAD
                                          map<pair<int,int>,
                                          pair<pair<int, int>,
                                          DIRECTION>>& parentMap) {
-    stack<DIRECTION> path;
-    pair<int, int> current = end;
+    // stack<DIRECTION> path; // <- E.U. Note: Momentarily commented out.
+    // pair<int, int> current = end;
 
-    while (!(current.first == start.first && current.second == start.second)) {
-        pair<pair<int, int>, DIRECTION> parent = parentMap[{current.first,
-                                                           current.second}];
-        path.push(parent.second);
-        current = parent.first;
-        cout << "DIREC " << parent.second << endl;
-=======
-                                         map<pair<int,int>, pair<pair<int, int>, DIRECTION>>& parentMap) {
+    // while (!(current.first == start.first && current.second == start.second)) {
+    //     pair<pair<int, int>, DIRECTION> parent = parentMap[{current.first,
+    //                                                        current.second}];
+    //     path.push(parent.second);
+    //     current = parent.first;
+    //     cout << "DIREC " << parent.second << endl;
+    // }
 
-    stack<DIRECTION> path;
-    pair<int, int> current = end;
+    // return path;
 
-    while (!(current.first == start.first && current.second == start.second)) {
-        pair<pair<int, int>, DIRECTION> parent = parentMap[{current.first, current.second}];
-        path.push(parent.second);
-        current = parent.first;
->>>>>>> 6dd752b2e105823059f279cd854cf559ec0d1d84
+     vector<DIRECTION> path;
+    pair<int,int> current = end;
+
+    // Walk end → start, collecting directions
+    while (current != start) {
+        auto& entry = parentMap.at(current);
+        path.push_back(entry.second);  // direction used to reach 'current'
+        current = entry.first;
     }
 
-    return path;
+    // path is [dir_to_end, ..., dir_from_start] — reverse for start→end order
+    reverse(path.begin(), path.end());
+
+    // Convert to stack so first step (path[0]) ends up on top
+    stack<DIRECTION> result;
+    for (int i = path.size() - 1; i >= 0; i--)
+        result.push(path[i]);
+
+    return result;
+
 }
 
 // function for reconstructPath_Backtrack_TeamOne()
-stack<DIRECTION> reconstructPath_Backtrack_TeamOne(pair<int, int> start,
-                                                   pair<int, int> end,
-                                                   pair<int, int> target,
-                                                   map<pair<int,int>, pair<pair<int, int>, DIRECTION>>& parentMap) {
-//FIXME - indices to match the global ------------------------
-    /*vector<DIRECTION> reversed;
-    stack<DIRECTION> path;
+stack<DIRECTION> reconstructPath_Backtrack_TeamOne( pair<int, int>&start,
+                                                    pair<int, int>& current,
+                                                    pair<int, int>& target,
+                                                    map<pair<int,int>,
+                                                    pair<pair<int, int>,
+                                                    DIRECTION>>& parentMap) {
 
-<<<<<<< HEAD
     cout << "Start in backtrack " << start.first << " " << start.second << endl;
-
+ /* E.U. Note: Logic Works good, but only for smaller mazes. Unecessarly goes ALL the way back to the start.
     vector<DIRECTION> pathUp;    // To go current -> start
     vector<DIRECTION> pathDown;  // To go start -> target
-=======
-    while (current != parentMap[current].first) {
-        cout << " DIRECTION " << parentMap[current].second << endl;
-        path.push(parentMap[current].second);
-        current = parentMap[current].first;
-    }
-
-    /* Loop until we step back to the start node
-    while (current != start) {
-        // parentMap[current] contains {previous_node, direction_to_reach_current}
-        auto entry = parentMap[current];
-        pair<int, int> parent = entry.first;
-        DIRECTION dirTaken = entry.second;
-
-        // Push the direction to the stack
-        path.push(dirTaken);
-
-        // Move current to the parent to continue backtracking
-        current = parent;
-    }
-
-    return path;
-
-    // reverse so first move is on top of stack
-    for (int i = reversed.size() - 1; i >= 0; i--) {
-        path.push(reversed[i]);
-    }*/
-
-    stack<DIRECTION> backtrackToStart;
-    queue<DIRECTION> forwardToTarget;
->>>>>>> 6dd752b2e105823059f279cd854cf559ec0d1d84
     stack<DIRECTION> finalPath;
-    pair<int, int> current = end;
 
-    //target == next in BFS
-
-    // Leg 1: walk current → start, inverting directions as we go
     pair<int,int> node = current;
-    while (node != parentMap.at(node).first) {
-        backtrackToStart.push(invertDirection(parentMap.at(node).second));
-        node = parentMap.at(node).first;
+    while (!(node == start)) {
+        pathUp.push_back(invertDirection(parentMap[node].second));
+        node = parentMap[node].first;
     }
 
-    // Leg 2: walk start → target forward through parentMap
-    //FIXME: Aubrey - Error here - attempting fix by using a queue to get FIFO behavior
     node = target;
-<<<<<<< HEAD
     while (!(node == start)) {
         pathDown.push_back(parentMap[node].second);
         node = parentMap[node].first;
@@ -361,38 +330,59 @@ stack<DIRECTION> reconstructPath_Backtrack_TeamOne(pair<int, int> start,
 
     reverse(pathDown.begin(), pathDown.end()); // Reversing pathDown to get correct order from start to target
 
-    for (int i = (int)pathDown.size()-1; i >= 0; i--) { // Reversed iteration
+    for (int i = pathDown.size()-1; i >= 0; i--) { // Reversed iteration
         finalPath.push(pathDown[i]);
     }
 
-    for (int i = (int)pathUp.size()-1; i >= 0; i--) { // Reversed iteration
+    for (int i = pathUp.size()-1; i >= 0; i--) { // Reversed iteration
         finalPath.push(pathUp[i]);
     }
 
     return finalPath;
+    */
 
-=======
-    while (node != parentMap.at(node).first) {
-        forwardToTarget.push(parentMap.at(node).second);
+    // Build ancestor chain for current: current → ... → start
+    vector<pair<int,int>> currentAncestors;
+    pair<int,int> node = current;
+    while (true) {
+        currentAncestors.push_back(node);
+        if (node == parentMap.at(node).first) break; // reached root
         node = parentMap.at(node).first;
     }
 
-
-
-    // forwardToTarget is reversed (target→start), so it's already in the right
-    // order to push onto finalPath after backtrackToStart
-
-    // Build finalPath: backtrack first, then forward
-    // forwardToTarget goes in first (it's the bottom of the stack)
-    while (!forwardToTarget.empty()) {
-        finalPath.push(forwardToTarget.front());
-        forwardToTarget.pop();
+    // Walk target → start until we hit something in current's ancestor chain
+    // That's the LCA — the meeting point
+    set<pair<int,int>> ancestorSet(currentAncestors.begin(), currentAncestors.end());
+    vector<pair<int,int>> targetAncestors;
+    node = target;
+    while (ancestorSet.find(node) == ancestorSet.end()) {
+        targetAncestors.push_back(node);
+        node = parentMap.at(node).first;
     }
-    // backtrackToStart goes on top (executes first)
-    while (!backtrackToStart.empty()) {
-        finalPath.push(backtrackToStart.top());
-        backtrackToStart.pop();
+    pair<int,int> lca = node; // lowest common ancestor
+
+    // Leg 1: current → lca (inverted directions)
+    vector<DIRECTION> pathUp;
+    node = current;
+    while (node != lca) {
+        pathUp.push_back(invertDirection(parentMap.at(node).second));
+        node = parentMap.at(node).first;
     }
+
+    // Leg 2: lca → target (forward directions)
+    // targetAncestors is [target, ..., child_of_lca] — reverse for lca→target
+    vector<DIRECTION> pathDown;
+    for (auto& n : targetAncestors) {
+        pathDown.push_back(parentMap.at(n).second);
+    }
+    reverse(pathDown.begin(), pathDown.end()); // now lca → target order
+
+    // Build stack: pathUp executes first (on top), pathDown executes second (on bottom)
+    stack<DIRECTION> finalPath;
+    for (int i = pathDown.size() - 1; i >= 0; i--)
+        finalPath.push(pathDown[i]);
+    for (int i = pathUp.size() - 1; i >= 0; i--)
+        finalPath.push(pathUp[i]);
 
     return finalPath;
 >>>>>>> 6dd752b2e105823059f279cd854cf559ec0d1d84
@@ -462,7 +452,6 @@ void initializeBFS_TeamOne(pair<int, int>& startPos,
     isQueueInitialized = true;
 }
 
-<<<<<<< HEAD
 bool canPathDirectly(pair<int,int> current, pair<int,int> target,
                      map<pair<int,int>, pair<pair<int,int>,
                              DIRECTION>>& parentMap) {
@@ -476,7 +465,7 @@ bool canPathDirectly(pair<int,int> current, pair<int,int> target,
         node = parentMap.at(node).first;
     }
 
-    return node == current; //
+    return node == current; // 
 }
 
 =======
@@ -511,105 +500,57 @@ DIRECTION BFSNextMove_TeamOne(set<pair<int,int>>& walls,
         DIRECTION nextMove = pathToTarget.top();
         pathToTarget.pop();
         updateCurrentLocation(currentLocation, nextMove);
-<<<<<<< HEAD
-        cout << "NExt move " << nextMove << endl;
-=======
->>>>>>> 6dd752b2e105823059f279cd854cf559ec0d1d84
+        cout << "Next move " << nextMove << endl;
         return nextMove;
     }
 
     // set boolean to false so we can start the pathfinding and traversal process again
     isPathing = false;
 
-    /* loop while the pointQueue is not empty and we are not currently pathing to a target
-    // literally should never stop :)
-    while (!pointQueue.empty() && !isPathing) {
-        // peek at the targetLocation from the from of the queue
+    /**loop while the pointQueue is not empty and we are not
+     * currently pathing to a target if we aren't at the targetLocation
+     * yet, take this branch we want to build the path to be able to
+     * explore targetLocation
+     * if we are at the targetLocation, we now want to explore the
+     * area around us
+     * dequeue the targetLocation since we are now exploring it
+     * explore the neighbors of the targetLocation and add them to
+     * the queue if they are valid
+     * also add the walls to the walls map that will be globally
+     * relative to this function and
+     * local relative to the TeamOneNextMove() function
+     * */
+
+    while (!pointQueue.empty()) {
+        cout << "In queue? " << endl;
         targetLocation = pointQueue.front();
 
-<<<<<<< HEAD
         if (currentLocation != targetLocation) {
             if (pathToTarget.empty()) {
-                cout << "currentLocation: " << currentLocation.first << "," << currentLocation.second << endl;
-                cout << "targetLocation: " << targetLocation.first << "," << targetLocation.second << endl;
-                cout << "parentMap has current: " << (parentMap.find(currentLocation) != parentMap.end()) << endl;
-                cout << "parentMap has target: " << (parentMap.find(targetLocation) != parentMap.end()) << endl;
-                if (canPathDirectly(currentLocation,
-                                    targetLocation, parentMap)) {
-                    pathToTarget = reconstructPath_TeamOne(currentLocation,
-                                                           targetLocation, parentMap);
-                } else {
-                    cout << "Start in func " << startLocation.first << " " << startLocation.second << endl;
-                    pathToTarget = reconstructPath_Backtrack_TeamOne(startLocation,
-                                                                     currentLocation,
-                                                                     targetLocation, parentMap);
-                }
+                // E.U. Note: Better optomized version below.
+                // if (canPathDirectly(currentLocation,
+                //                     targetLocation, parentMap)) {
+                //     pathToTarget = reconstructPath_TeamOne(currentLocation,
+                //                                            targetLocation, parentMap);
+                // } else {
+                //     cout << "Start in func " << startLocation.first << " " << startLocation.second << endl;
+                //     pathToTarget = reconstructPath_Backtrack_TeamOne(startLocation,
+                //                                                      currentLocation,
+                //                                                      targetLocation, parentMap);
+                // }
+
+                pathToTarget = reconstructPath_TeamOne(currentLocation,
+                                                       targetLocation, parentMap);
             }
 
-=======
-        // if we aren't at the targetLocation yet, take this branch
-        // we want to build the path to be able to explore targetLocation
-        if (!(currentLocation.first == targetLocation.first &&
-              currentLocation.second == targetLocation.second)) {
-            pathToTarget = reconstructPath_TeamOne(currentLocation, targetLocation, parentMap);
-            isPathing = true;
->>>>>>> 6dd752b2e105823059f279cd854cf559ec0d1d84
             DIRECTION nextMove = pathToTarget.top();
             pathToTarget.pop();
             updateCurrentLocation(currentLocation, nextMove);
+            cout << "NExt move " << nextMove << endl;
             return nextMove;
-        }
-            // if we are at the targetLocation, we now want to explore the area around us
-        else {
-            // dequeue the targetLocation since we are now exploring it
-            pointQueue.pop();
-            // we aren't pathing to a target now, so set it to false
-            isPathing = false;
-            // explore the neighbors of the targetLocation and add them to the queue if they are valid
-            // also add the walls to the walls map that will be globally relative to this function and
-            // local relative to the TeamOneNextMove() function
-            exploreNeighbors_TeamOne(currentLocation, parentMap, pointQueue, walls, car);  //point queue is expree
-            pathToTarget = reconstructPath_Backtrack_TeamOne(currentLocation, startLocation, parentMap);
-            cout << "PATH SIZE " << pathToTarget.size() << endl;
 
-            isPathing = true;
-            DIRECTION nextMove = pathToTarget.top();
-            pathToTarget.pop();
-            updateCurrentLocation(currentLocation, nextMove);
-            cout << "RETURNING " << nextMove << endl;
-            return nextMove;
-        }
-    }*/
+        } else {
 
-    while (!pointQueue.empty() && !isPathing) {
-        targetLocation = pointQueue.front();
-
-        if (!(currentLocation.first == targetLocation.first &&
-              currentLocation.second == targetLocation.second)) {
-            // path to the next unvisited node
-            //pathToTarget = reconstructPath_TeamOne(currentLocation, targetLocation, parentMap);
-            cout << "Building path from: " << currentLocation.first << "," << currentLocation.second
-                 << " to target: " << targetLocation.first << "," << targetLocation.second << endl;
-            //pathToTarget = reconstructPath_Backtrack_TeamOne(startLocation, currentLocation, targetLocation, parentMap);
-
-            //Are we right next to the target location?
-            if (parentMap.count(targetLocation) &&
-                parentMap.at(targetLocation).first == currentLocation) {
-                pathToTarget = stack<DIRECTION>();
-                pathToTarget.push(parentMap.at(targetLocation).second);
-            } else {
-                pathToTarget = reconstructPath_Backtrack_TeamOne(startLocation, currentLocation, targetLocation, parentMap);
-            }
-
-            cout << "PATH SIZE " << pathToTarget.size() << endl;
-            isPathing = true;
-            DIRECTION nextMove = pathToTarget.top();
-            pathToTarget.pop();
-            updateCurrentLocation(currentLocation, nextMove);
-            return nextMove;
-        }
-        else {
-            // arrived at target, explore and move on
             pointQueue.pop();
             isPathing = false;
             exploreNeighbors_TeamOne(currentLocation, parentMap, pointQueue, walls, car);
